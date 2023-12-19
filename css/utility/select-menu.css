@@ -1,0 +1,131 @@
+::selection{
+  color: #fff;
+  background: var(--body-bg);
+}
+.wrapper{
+  width: 50%;
+  margin: 30px auto 50px;
+}
+.select-btn, li{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.select-btn{
+  height: 65px;
+  padding: 0 20px;
+  font-size: 1.1rem;
+  background: var(--menu-bg);
+  color: var(--menu-color);
+  border-radius: 7px;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.content{
+  position: absolute;
+  width: 50%;
+  display: none;
+  padding: 10px;
+  margin-top: 15px;
+  background: var(--menu-bg);
+  color: var(--menu-color);
+  border-radius: 7px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+.wrapper.active .content{
+  display: block;
+}
+.content .search{
+  position: relative;
+}
+
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--select-color);
+  transition: 0.35;
+}
+  
+.caret-rotate {
+  transform: rotate(180deg);
+}
+
+.search input{
+  background: var(--menu-bg);
+  color: var(--menu-color);
+  height: 50px;
+  width: 100%;
+  outline: none;
+  font-size: 1.4rem;
+  border-radius: 5px;
+  padding: 0 20px;
+  border: 1px solid #B3B3B3;
+}
+.search input:focus{
+  padding: 0 20px;
+  border: 2px solid var(--select);
+}
+.search input::placeholder{
+  color: #bfbfbf;
+}
+.content .options{
+  font-size: 0.8rem;
+  margin-top: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 7px;
+}
+.options::-webkit-scrollbar{
+  width: 7px;
+}
+.options::-webkit-scrollbar-track{
+  background: var(--menu-hover);
+  border-radius: 25px;
+}
+.options::-webkit-scrollbar-thumb{
+  background: #ccc;
+  border-radius: 25px;
+}
+
+.options li{
+  height: 40px;
+  padding: 0 13px;
+  font-size: var(--font-size);
+}
+
+@media screen and (max-width: 768px) {
+
+  .wrapper {
+    width: 95%;
+  }
+
+  .select-btn {
+    font-size: 0.6rem;
+  }
+  .content {
+    width: 95%;
+  }
+
+  .options li {
+    font-size: 0.7rem;
+    height: 55px;
+  }
+    
+}
+
+@media(hover: hover) {
+  .options::-webkit-scrollbar-thumb:hover{
+    background: #b3b3b3;
+  }
+
+  .options li:hover, li.selected{
+    border-radius: 5px;
+    background: #f2f2f2;
+  }
+    
+}

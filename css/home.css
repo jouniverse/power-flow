@@ -1,0 +1,57 @@
+body
+{
+    background-color: var(--body-bg);
+    background-image: url('../imgs/power-company-logo.svg');
+    background-size: 150px 150px;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+h1 {
+    text-align: center;
+    line-height: 3rem;
+    font-size: 3rem;
+    font-weight: bold;
+    padding: 2rem;
+    margin-top: 3rem;
+    color: var(--select-clicked);
+}
+
+hr {
+    width: 100%;
+    color: var(--menu-color);
+    margin: 10px;
+}
+
+footer {
+    opacity: 0.5;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    color: var(--select-color);
+}
+
+@media screen and (max-width: 768px) {
+
+    body {
+        background-size: 100px 100px;
+    }
+
+}
+
+@media(hover: hover) {
+
+    h1:hover {
+        color: var(--the-pink);
+        text-shadow: 0 0 20px #9fa5b5;
+        cursor: pointer;
+        transition: ease-in-out 0.4s;
+    }
+
+}
+

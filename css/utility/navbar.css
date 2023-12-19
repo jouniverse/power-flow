@@ -1,0 +1,148 @@
+
+nav {
+  width: 100%;
+  background-color: var(--select);
+  padding: 10px 10px 10px 0px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+.nav-menu {
+  list-style-type: none;
+}
+
+.nav-menu a {
+  border-radius: var(--border-radius);
+}
+
+.logo {
+  padding-left: 10px;
+  flex-grow: 1;
+}
+
+.logo-img {
+  width: 100px;
+  height: auto;
+}
+
+.item {
+  padding: 40px 30px 20px 30px;
+  order: 1;
+  position: relative;
+  display: block;
+  width: auto;
+}
+
+/* Mobile menu */
+.nav-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav-menu li a {
+  display: block;
+  padding: 15px 5px;
+}
+
+
+.item {
+  order: 3;
+  width: 100%;
+  text-align: center;
+  display: none;
+}
+
+.active .item {
+  display: block;
+}
+
+.toggle  {
+  display: none;
+}
+
+.toggle div {
+  width: 35px;
+  height: 5px;
+  background-color: white;
+  margin: 8px 8px;
+  border-radius: var(--border-radius);
+}
+
+/* Rotate first bar */
+.change .bar-1 {
+  transform: translate(0, 12px) rotate(45deg);
+  background-color: var(--menu-color);
+  transition: ease-in-out 0.3s;
+}
+
+/* Fade out the second bar */
+.change .bar-2 {
+  opacity: 0;
+  transition: ease-in-out 0.1s;
+}
+
+/* Rotate last bar */
+.change .bar-3 {
+  transform: translate(0,-15px) rotate(-45deg);
+  background-color: rgb(194, 0, 0);
+  transition: ease-in-out 0.3s;
+}
+  
+/* Mobile menu */
+@media screen and (max-width: 768px) {
+  nav {
+    background-color: var(--body-bg);
+    padding: 0 10px 0 0;
+  }
+
+  .toggle {
+      display: block;
+  }
+
+  .nav-menu {
+    justify-content: center;
+  }
+
+  .logo-img {
+      width: 50px;
+      height: auto;
+  }
+
+}
+/* Desktop menu */
+@media all and (min-width: 768px) {
+  .logo {
+      order: 0;
+  }
+    
+  .nav-menu {
+    align-items: flex-start; 
+    flex-wrap: nowrap;
+    background: none;
+  }
+  .item {
+    order: 1;
+    position: relative;
+    display: block;
+    width: auto;
+  }
+}
+
+@media(hover: hover) {
+  /* Change the color of links on hover */
+  .nav-menu .item a:hover,
+  .nav-menu .item a.active:hover {
+      background: var(--select-color);
+      color: var(--menu-bg);
+      outline: thick double var(--select-color);
+      outline-offset: 4px;
+      border-radius: var(--border-radius);
+      text-shadow: var(--dark-grey) 10px 5px;
+      transition: ease-in-out 0.2s;
+  }
+}
+  

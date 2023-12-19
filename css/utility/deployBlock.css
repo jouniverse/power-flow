@@ -1,0 +1,27 @@
+.info-container{
+  color: var(--menu-color);
+  text-decoration: none;
+  font-size: 0.6rem;
+  padding: 3px;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.container-block{
+  overflow: hidden;
+  max-height: 0;
+  font-size: 0.7rem;
+  background-color: var(--body-bg);
+  color: var(--menu-color);
+  border-radius: 0.5rem;
+  transition: max-height .3s;
+}
+
+.content-block{
+  padding: 1rem 1rem;
+}
+
+.info-link {
+  margin-top: 20px;
+  margin-left: 10px;
+}

@@ -1,0 +1,28 @@
+:root {
+    --body-bg: #23242a;
+    --select: #2a2f3b;
+    --select-clicked: #525456;
+    --select-color: #fff;
+    --menu-bg: #323741;
+    --menu-border: #363a43;
+    --menu-color: #9fa5b5;
+    --menu-hover: #2a2d35;
+    --the-pink: rgb(255, 155, 172);
+
+    --border-radius: 0.5rem;
+    --font-family: 'IBM Plex Mono', monospace;
+    /* --font-family: 'IBM Plex Sans Arabic', sans-serif; */
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    font-weight: 500;
+}
+
+html {
+    scroll-behavior: smooth;
+}
