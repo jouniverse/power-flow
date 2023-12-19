@@ -2,7 +2,7 @@
 
 ## Description
 
-<p><b><i>Power Flow</i></b> is a data-analytics dashboard offering real-time insights into the electric power grid, facilitating smart decision-making for optimized performance and reliability. It is based on the <a href="https://data.fingrid.fi/en/"> API provided by Fingrid</a><sup>1</sup>. It allows you to access some of the key performance indicators (KPI) of the power grid as well as to search for all the available indicators.</p>
+[<p><b><i>Power Flow</i></b>[(https://jouniverse.github.io/power-flow/home.html) is a data-analytics dashboard offering real-time insights into the electric power grid, facilitating smart decision-making for optimized performance and reliability. It is based on the <a href="https://data.fingrid.fi/en/"> API provided by Fingrid</a><sup>1</sup>. It allows you to access some of the key performance indicators (KPI) of the power grid as well as to search for all the available indicators.</p>
 <p><small>The following KPIs are covered in the dashboard: electricity consumption and production; net import/export of electricity; hydro, nuclear, wind and solar power production; cogeneration of district heating and industrial cogeneration; kinetic energy of the power system; frequency and time-deviation.
 
 ## API Source
