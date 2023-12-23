@@ -8,6 +8,7 @@
     background-color: rgba(99, 92, 92, 0.3);
     /* glassmorphism */
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-top: 1px solid rgba(255, 255, 255, 0.4);
     border-left: 1px solid rgba(255, 255, 255, 0.4);
     box-shadow: 3px 3px 3px rgba (0,0, 0,0. 089) ;
@@ -38,7 +39,6 @@ p {
     .glass-container {
         width: 95%;
         height: auto;
-        background-color: rgba(99, 92, 92, 0.8);
         margin-bottom: 50px;
     }
 }
