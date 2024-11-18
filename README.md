@@ -10,7 +10,7 @@
 <p><a href="https://www.fingrid.fi/en/">Fingrid</a> is a Finnish national electricity transmission grid operator. It's mission is:<blockquote><i>to secure the supply of energy in our society in all circumstances and to promote a clean, market-based power system.</i></blockquote></p>
 <hr>
 
-<p>The site is not constantly updated, and it will be defunct if there are breaking changes in the API.</p>
+<p>The site is not constantly updated, and it will become defunct if there are breaking changes in the API.</p>
 
 ## License
 
