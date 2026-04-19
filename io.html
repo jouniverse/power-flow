@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Style sheets -->
+    <link rel="stylesheet" href="./css/global/global.css">
+    <link rel="stylesheet" href="./css/utility/navbar.css">
+    <link rel="stylesheet" href="./css/utility/menu.css">
+    <link rel="stylesheet" href="./css/io.css">
+    <link rel="stylesheet" href="./css/utility/deployBlock.css">
+    <link rel="stylesheet" href="./css/utility/glow-button.css">
+    <link rel="stylesheet" href="./css/utility/importExportMap.css">
+</head>
+<body>
+    <nav></nav>
+
+    <h1>IO</h1>
+
+    <div class="dropdown">
+        <div id="select" class="select">
+            <span id="selected" class="selected">Select</span>
+            <div class="caret"></div>
+        </div>
+        <ul class="menu">
+        </ul>
+    </div>
+
+    <div class="map-container">
+        <div class="map-canvas">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="480 150 100 150">
+                <path id="EE" class="map-country" title="Estonia"
+                    d="M543.423,264.71L543.748,261.586L542.717,262.258L540.938,260.358L540.694,257.245L544.24,255.717L547.772,254.915L550.814,255.827L553.708,255.664L554.13,256.624L552.135,259.756L552.966,264.718L551.765,266.377L549.453,266.368L547.04,264.426L545.811,263.78z"
+                    onmouseover="displayMapPowerData('Estonia')"></path>
+                <path id="FI" class="map-country" title="Finland"
+                    d="M555.42,193.099L555.011,198.503L559.305,203.493L556.718,208.971L559.979,216.928L558.091,222.691L560.615,227.546L559.469,231.691L563.62,235.947L562.565,239.052L559.96,242.504L553.957,249.91L548.869,250.361L543.938,252.429L539.376,253.608L537.753,250.543L535.038,248.674L535.662,242.946L534.3,237.538L535.637,233.959L538.179,230.017L544.594,222.997L546.465,221.611L546.174,218.774L542.274,215.549L541.328,212.849L541.254,201.729L536.877,196.576L533.14,192.774L534.821,190.686L537.937,194.839L541.598,194.455L544.608,196.324L547.282,192.885L548.657,187.03L553.01,184.255L556.608,187.507z"
+                    onmouseover="displayMapPowerData('Finland')"></path>
+                <path id="NO" class="map-country" title="Norway"
+                    d="M554.225,175.606l8.77,6.24l-3.611,2.226l3.072,5.115l-4.771,3.188l-2.265,0.724l1.188,-5.592l-3.598,-3.252l-4.354,2.775l-1.375,5.854l-2.673,3.439l-3.011,-1.87l-3.661,0.384l-3.116,-4.153l-1.681,2.088l-1.739,0.323l-0.412,5.083l-5.284,-1.224l-0.742,4.217l-2.692,-0.025l-1.851,5.243l-2.805,7.867l-4.354,9.5l1.021,2.232l-0.976,2.554l-2.781,-0.109l-1.821,5.906l0.172,8.044l1.792,2.978l-0.928,6.727l-2.333,3.812l-1.236,3.145l-1.881,-3.351l-5.536,6.266l-3.738,1.245l-3.877,-2.715l-1.002,-5.864l-0.887,-13.256l2.582,-3.875l7.403,-5.184l5.536,-6.586l5.133,-9.301l6.737,-13.762l4.696,-5.674l7.705,-9.893l6.153,-3.592l4.613,0.44l4.27,-6.995l5.113,0.381L554.225,175.606z"
+                    onmouseover="displayMapPowerData('Norway')"></path>
+                <path id="SE" class="map-country" title="Sweden"
+                    d="M537.451,217.489L534.732,222.179L535.17,226.195L530.71,231.334L525.295,236.672L523.254,245.084L525.25,249.151L527.931,252.291L525.355,258.517L522.439,259.782L521.37,268.62L519.777,273.378L516.376,272.893L514.789,276.842L511.543,277.068L510.652,272.358L508.305,266.547L506.172,259.046L507.408,255.901L509.741,252.089L510.669,245.362L508.877,242.384L508.705,234.34L510.525,228.434L513.307,228.543L514.282,225.989L513.261,223.757L517.615,214.257L520.419,206.39L522.271,201.147L524.963,201.172L525.705,196.955L530.989,198.179L531.401,193.097L533.14,192.774L536.877,196.576L541.254,201.729L541.328,212.849L542.274,215.549z"
+                    onmouseover="displayMapPowerData('Sweden')"></path>
+            </svg>
+        </div>
+        <div id="map-info-display">
+            <h2>Current Power Transfer Information</h2>
+            <p>Hover over a country to see power transfer data with Finland.</p>
+        </div>
+    </div>
+
+    <div id="chartBox" class="chartBox">
+        <div class="chart-wrapper" id="net-import-export-wrapper">
+            <div class="loader" id="net-import-export-loader" style="display:none"></div>
+            <canvas id="net-import-export"></canvas>
+        </div>
+        <a href="#net-import-export-block" class="info-link info-container glow-on-hover">Net import/export</a>
+        <div id="net-import-export-block" class="container-block">
+            <div class="content-block">
+                <p id="net-import-export-info" class="info-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer></footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" integrity="sha512-wUYbRPLV5zs6IqvWd88HIqZU/b8TBx+I8LEioQ/UC0t5EMCLApqhIAnUg7EsAzdbhhdgW07TqYDdH3QEXRcPOQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Date adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <script src="./js/utility/menu-items.js"></script>
+    <script src="./js/finGridIndex.js"></script>
+    <script src="./js/math/math.js"></script>
+    <script src="./js/utility/dateFunctions.js"></script>
+    <script src="./js/utility/detectMobile.js"></script>
+    <script src="./js/utility/navbar.js"></script>
+    <script src="./js/utility/copyright.js"></script>
+    <script src="./js/utility/deployBlock.js"></script>
+    <script src="./js/utility/menu.js"></script>
+    <script src="./js/utility/net-import-export.js"></script>
+    <script src="./js/utility/importExportMap.js"></script>
+
+</body>
+</html>

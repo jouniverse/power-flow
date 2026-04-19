@@ -1,0 +1,26 @@
+{
+  "name": "power-flow",
+  "version": "1.0.0",
+  "description": "[<b>Power Flow</b>](https://jouniverse.github.io/power-flow/home.html) is a data-analytics dashboard offering real-time insights into the electric power grid, facilitating smart decision-making for optimized performance and reliability. It is based on the <a href=\"https://data.fingrid.fi/en/\"> API provided by Fingrid</a><sup>1</sup>. It allows you to access some of the key performance indicators (KPI) of the power grid as well as to search for all the available indicators. <p><small>The following KPIs are covered in the dashboard: electricity consumption and production; net import/export of electricity; hydro, nuclear, wind and solar power production; cogeneration of district heating and industrial cogeneration; kinetic energy of the power system; frequency and time-deviation.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jouniverse/power-flow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jouniverse/power-flow/issues"
+  },
+  "homepage": "https://github.com/jouniverse/power-flow#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}

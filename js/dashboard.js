@@ -1,12 +1,15 @@
-let gridOptions = ['consumption-production','net-import-export','hydro-nuclear','wind','solar','cogeneration','kinetic-energy','frequency','time-deviation']
+let gridOptions = ['consumption-production','hydro-nuclear','wind','solar','cogeneration','kinetic-energy','frequency','time-deviation']
 
-let btnLabels = ['Consumption and production', 'Net import/export', 'Hydro and nuclear power', 'Wind power', 'Solar power', 'Cogeneration', 'Kinetic energy', 'Frequency', 'Time deviation']
+let btnLabels = ['Consumption and production', 'Hydro and nuclear power', 'Wind power', 'Solar power', 'Cogeneration', 'Kinetic energy', 'Frequency', 'Time deviation']
 
 let chartContainer = document.getElementById('chartBox')
 
 gridOptions.forEach((g, index) => {
     chartContainer.innerHTML += `
-        <canvas id="${g}" class="${g}"></canvas>
+        <div class="chart-wrapper" id="${g}-wrapper">
+            <div class="loader" id="${g}-loader" style="display:none"></div>
+            <canvas id="${g}" class="${g}"></canvas>
+        </div>
         <a href="#${g}-block" class="info-link info-container glow-on-hover">${btnLabels[index]}</a>
         <div id="${g}-block" class="container-block">
             <div class="content-block">
@@ -55,3 +58,25 @@ if (!detectMobile()) {
     addPlot([timeDeviationId], 'time-deviation', 2/1)
 }
 
+// Single listener that processes all charts sequentially to avoid rate limiting
+let selectDateRange = document.getElementById("selected");
+selectDateRange.addEventListener('selectedChange', async () => {
+    // Show all spinners
+    gridOptions.forEach(g => {
+        const loader = document.getElementById(g + '-loader');
+        if (loader) loader.style.display = '';
+    });
+
+    let date = {};
+    switch (selectDateRange.innerHTML) {
+        case "Current Week": date = getCurrentWeek(); break;
+        case "Last Week": date = getLastWeek(); break;
+        case "Last Month": date = getLastMonth(); break;
+        case "Current Month": date = getCurrentMonth(); break;
+        default: return;
+    }
+    const args = [date[0].year, date[0].month, date[0].day, date[0].hour, date[0].minute, date[0].seconds, date[1].year, date[1].month, date[1].day, date[1].hour, date[1].minute, date[1].seconds];
+    for (const plotFn of _chartPlotQueue) {
+        await plotFn(...args);
+    }
+});

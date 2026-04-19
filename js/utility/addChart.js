@@ -1,7 +1,26 @@
+const _chartPlotQueue = [];
+
 async function getData(apiURL) {
-    const res = await fetch(apiURL);
-    const body = await res.json();
-    return body;
+    // Throttle: ensure 6s between API calls
+    const now = Date.now();
+    const elapsed = now - (window._lastApiCallTime || 0);
+    if (elapsed < 6000) {
+        await new Promise(r => setTimeout(r, 6000 - elapsed));
+    }
+    window._lastApiCallTime = Date.now();
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+        const res = await fetch(apiURL);
+        if (res.status === 429) {
+            console.warn(`getData: 429 received, waiting 6s (attempt ${attempt + 1}/3)`);
+            await new Promise(r => setTimeout(r, 6000));
+            window._lastApiCallTime = Date.now();
+            continue;
+        }
+        return await res.json();
+    }
+    console.warn('getData: max retries reached for', apiURL);
+    return { data: [] };
 }
 
 function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
@@ -28,7 +47,7 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
             radius: 0,
             hoverBackgroundColor: '#9fa5b5',
             pointHoverRadius: 5,
-            yAxisId: 'y'
+            yAxisID: 'y'
         },
         {
             // plot two
@@ -40,13 +59,14 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
             radius: 0,
             hoverBackgroundColor: 'white',
             pointHoverRadius: 5,
-            yAxisId: 'y1'
+            yAxisID: 'y1'
         }
     ],
         },
         options: {
         responsive: true,
         maintainAspectRatio: true,
+        resizeDelay: 100,
         aspectRatio: aspectRatio,
         scales: {
             x: {
@@ -55,7 +75,10 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
                 grid: {
                     display: false
                 },
-                display: true
+                display: true,
+                ticks: {
+                    color: 'white',
+                }
             },
             y: {
                 type: 'linear',
@@ -68,6 +91,9 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
                 min: Math.min(...yAxisPlotOne)-(Math.max(...yAxisPlotOne)-Math.min(...yAxisPlotOne))*0.05,
                 display: true,
                 position: 'left',
+                ticks: {
+                    color: 'white',
+                }
             },  
             y1: {   
                 type: 'linear',
@@ -80,6 +106,9 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
                 min: Math.min(...yAxisPlotTwo)-(Math.max(...yAxisPlotTwo)-Math.min(...yAxisPlotTwo))*0.05,
                 display: true,
                 position: 'right',
+                ticks: {
+                    color: 'white',
+                }
             }      
         },
         plugins: {
@@ -112,8 +141,11 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
         }
     });
 
+    Chart.defaults.color = 'white';
+
     function addStats(plotIdx, dataPlot, units, name) {
         let stats = document.getElementById(name + '-info');
+        const selectedPeriod = document.getElementById('selected')?.innerHTML || '';
         if (plotIdx.length > 1) {
             let descriptionOne = finGridData.description.at(finGridData.id.findIndex(n => n == plotIdx[0]))
             let nameOne = finGridData.name.at(finGridData.id.findIndex(n => n == plotIdx[0]))
@@ -132,7 +164,7 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
             let avgTwo = roundTo(mean(dataPlot[1]), 3)
             let medTwo = roundTo(median(dataPlot[1]), 3)
 
-            stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b> [${units[0]}]</div><div>Min: <b>${minOne}</b> [${units[0]}]<div>Range (Max - Min): <b>${rangeOne}</b> [${units[0]}]</div><div>Average: <b>${avgOne}</b> [${units[0]}]</div><div>Median: <b>${medOne}</b> [${units[0]}]</div><br><div><a href='${hyperlinkTwo}'>${nameTwo}</a></div><div>${descriptionTwo}</div><div>Max: <b>${maxTwo}</b> [${units[1]}]</div><div>Min: <b>${minTwo}</b> [${units[1]}]<div>Range (Max - Min): <b>${rangeTwo}</b> [${units[1]}]</dvi><div>Average: <b>${avgTwo}</b> [${units[1]}]</div><div>Median: <b>${medTwo}</b> [${units[1]}]</div>`;
+            stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div><b>${selectedPeriod}</b></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b> [${units[0]}]</div><div>Min: <b>${minOne}</b> [${units[0]}]<div>Range (Max - Min): <b>${rangeOne}</b> [${units[0]}]</div><div>Average: <b>${avgOne}</b> [${units[0]}]</div><div>Median: <b>${medOne}</b> [${units[0]}]</div><br><div><a href='${hyperlinkTwo}'>${nameTwo}</a></div><div>${descriptionTwo}</div><div>Max: <b>${maxTwo}</b> [${units[1]}]</div><div>Min: <b>${minTwo}</b> [${units[1]}]<div>Range (Max - Min): <b>${rangeTwo}</b> [${units[1]}]</dvi><div>Average: <b>${avgTwo}</b> [${units[1]}]</div><div>Median: <b>${medTwo}</b> [${units[1]}]</div>`;
 
         } else {
 
@@ -145,9 +177,9 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
             let avgOne = roundTo(mean(dataPlot[0]), 3)
             let medOne = roundTo(median(dataPlot[0]), 3)
             if (units[0] != "" ) {
-                stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b> [${units[0]}]</div><div>Min: <b> ${minOne}</b> [${units[0]}]<div> Range (Max - Min): <b>${rangeOne}</b> [${units[0]}]</div><div>Average: <b>${avgOne}</b> [${units[0]}]</div><div>Median: <b>${medOne}</b> [${units[0]}]</div>`;
+                stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div><b>${selectedPeriod}</b></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b> [${units[0]}]</div><div>Min: <b> ${minOne}</b> [${units[0]}]<div> Range (Max - Min): <b>${rangeOne}</b> [${units[0]}]</div><div>Average: <b>${avgOne}</b> [${units[0]}]</div><div>Median: <b>${medOne}</b> [${units[0]}]</div>`;
             } else {
-                stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b></div><div>Min: <b> ${minOne}</b><div> Range (Max - Min): <b>${rangeOne}</b></div><div>Average: <b>${avgOne}</b> </div><div>Median: <b>${medOne}</b></div>`;
+                stats.innerHTML = `<div><a href='${hyperlinkOne}'>${nameOne}</a></div><div><b>${selectedPeriod}</b></div><div>${descriptionOne}</div><div>Max: <b>${maxOne}</b></div><div>Min: <b> ${minOne}</b><div> Range (Max - Min): <b>${rangeOne}</b></div><div>Average: <b>${avgOne}</b> </div><div>Median: <b>${medOne}</b></div>`;
             }
 
         }
@@ -164,9 +196,10 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
             powerSystemDiv.innerHTML = ""
         }
 
-        let powerSystemStateURL =  `https://api.fingrid.fi/v1/variable/${powerSystemStateId}/events/json?start_time=${startYear}-${startMonth}-${startDay}T${startHour}%3A${startMinute}%3A${startSeconds}Z&end_time=${endYear}-${endMonth}-${endDay}T${endHour}%3A${endMinute}%3A${endSeconds}Z`
+        let powerSystemStateURL =  `/api/datasets/${powerSystemStateId}/data?startTime=${startYear}-${startMonth}-${startDay}T${startHour}:${startMinute}:${startSeconds}Z&endTime=${endYear}-${endMonth}-${endDay}T${endHour}:${endMinute}:${endSeconds}Z&format=json&pageSize=20000&sortBy=startTime&sortOrder=asc`
 
-        powerSystemState = await getData(powerSystemStateURL);
+        let powerSystemStateRes = await getData(powerSystemStateURL);
+        powerSystemState = powerSystemStateRes.data;
         
         powerSystemData = []
         for (let i = 0; i < powerSystemState.length; i++) {
@@ -205,24 +238,35 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
 
         let dataPlot = [];
 
-        let plotOneURL = `https://api.fingrid.fi/v1/variable/${plots[0]}/events/json?start_time=${startYear}-${startMonth}-${startDay}T${startHour}%3A${startMinute}%3A${startSeconds}Z&end_time=${endYear}-${endMonth}-${endDay}T${endHour}%3A${endMinute}%3A${endSeconds}Z`
+        let plotOneURL = `/api/datasets/${plots[0]}/data?startTime=${startYear}-${startMonth}-${startDay}T${startHour}:${startMinute}:${startSeconds}Z&endTime=${endYear}-${endMonth}-${endDay}T${endHour}:${endMinute}:${endSeconds}Z&format=json&pageSize=20000&sortBy=startTime&sortOrder=asc`
 
-        dataPlotOne = await getData(plotOneURL);
+        let plotOneRes = await getData(plotOneURL);
+        dataPlotOne = plotOneRes.data;
 
         if (plots.length > 1) {
-            let plotTwoURL = `https://api.fingrid.fi/v1/variable/${plots[1]}/events/json?start_time=${startYear}-${startMonth}-${startDay}T${startHour}%3A${startMinute}%3A${startSeconds}Z&end_time=${endYear}-${endMonth}-${endDay}T${endHour}%3A${endMinute}%3A${endSeconds}Z`
+            let plotTwoURL = `/api/datasets/${plots[1]}/data?startTime=${startYear}-${startMonth}-${startDay}T${startHour}:${startMinute}:${startSeconds}Z&endTime=${endYear}-${endMonth}-${endDay}T${endHour}:${endMinute}:${endSeconds}Z&format=json&pageSize=20000&sortBy=startTime&sortOrder=asc`
 
-        dataPlotTwo = await getData(plotTwoURL);
+        let plotTwoRes = await getData(plotTwoURL);
+        dataPlotTwo = plotTwoRes.data;
+        }
+
+        if (dataPlotOne.length === 0) {
+            console.warn('plotChart: no data returned for', chartName);
+            const loader = document.getElementById(chartName + '-loader');
+            if (loader) loader.style.display = 'none';
+            return;
         }
         
         seriesData = {plotOne: [], plotTwo: []}
         yAxisPlotOne = [];
         yAxisPlotTwo = [];  
         for (let i = 0; i < dataPlotOne.length; i++) {
-            seriesData.plotOne.push({x:dataPlotOne[i].start_time,y:dataPlotOne[i].value})
+            seriesData.plotOne.push({x:dataPlotOne[i].startTime,y:dataPlotOne[i].value})
             yAxisPlotOne.push(dataPlotOne[i].value)
-            if (plots.length > 1) {
-                seriesData.plotTwo.push({x:dataPlotTwo[i].start_time,y:dataPlotTwo[i].value})
+        }
+        if (plots.length > 1) {
+            for (let i = 0; i < dataPlotTwo.length; i++) {
+                seriesData.plotTwo.push({x:dataPlotTwo[i].startTime,y:dataPlotTwo[i].value})
                 yAxisPlotTwo.push(dataPlotTwo[i].value)
             }
         }
@@ -279,35 +323,12 @@ function addPlot(plots, chartName, aspectRatio = 3/1, scaling = 1) {
         addStats(plots, dataPlot, unitValue, chartName);
         // update the plot
         gridPlot.update();
-        
-        let chartBox = document.getElementById('chartBox')
-        chartBox.style.visibility = "visible"
+
+        // Hide spinner
+        const loader = document.getElementById(chartName + '-loader');
+        if (loader) loader.style.display = 'none';
     }
 
-    // date functions
-    let selectDateRange = document.getElementById("selected");
-    let selectMenu = document.getElementById('select');
-    selectDateRange.addEventListener('selectedChange', () => {
-        let date = {};
-        switch (selectDateRange.innerHTML) {
-            case "Current Week":
-                date = getCurrentWeek();
-                plotChart(date[0].year, date[0].month, date[0].day, date[0].hour, date[0].minute, date[0].seconds, date[1].year, date[1].month, date[1].day, date[1].hour, date[1].minute, date[1].seconds)
-                break;
-            case "Last Week":
-                date = getLastWeek();
-                plotChart(date[0].year, date[0].month, date[0].day, date[0].hour, date[0].minute, date[0].seconds, date[1].year, date[1].month, date[1].day, date[1].hour, date[1].minute, date[1].seconds)
-                break;
-            case "Last Month":
-                date = getLastMonth();
-                plotChart(date[0].year, date[0].month, date[0].day, date[0].hour, date[0].minute, date[0].seconds, date[1].year, date[1].month, date[1].day, date[1].hour, date[1].minute, date[1].seconds)
-                break;
-            case "Current Month":
-                date = getCurrentMonth();
-                plotChart(date[0].year, date[0].month, date[0].day, date[0].hour, date[0].minute, date[0].seconds, date[1].year, date[1].month, date[1].day, date[1].hour, date[1].minute, date[1].seconds)
-                break;
-            default:
-                break;
-        }
-    });
+    // Register plotChart in global queue for sequential processing
+    _chartPlotQueue.push(plotChart);
 }

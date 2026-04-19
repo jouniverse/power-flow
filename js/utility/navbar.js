@@ -7,6 +7,9 @@ navBar.innerHTML = `<ul class="nav-menu">
     <a href="dashboard.html">Dashboard</a>
 </li>
 <li class="item">
+    <a href="io.html">IO</a>
+</li>
+<li class="item">
     <a href="search.html">Search</a>
 </li>
 <li class="item"><a href="about.html">About</a></li>

@@ -13,8 +13,8 @@ let endYear;
 let endMonth;
 let endDay;
 let endHour;
-let endMinute = currentDate.getMinutes();
-let endSeconds = currentDate.getSeconds();
+let endMinute = currentDate.getMinutes().toString().padStart(2, '0');
+let endSeconds = currentDate.getSeconds().toString().padStart(2, '0');
 
 let startDateInput = document.getElementById('startDate');
 let endDateInput = document.getElementById('endDate');
@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', function() {
             minDate.setDate(minDate.getDate()+1);
 
             startYear = startDate.getFullYear()
-            startMonth = startDate.getMonth()+1
-            startDay = startDate.getDate()
+            startMonth = (startDate.getMonth()+1).toString().padStart(2, '0')
+            startDay = startDate.getDate().toString().padStart(2, '0')
             endDateInput.setAttribute('max', formatDate(maxDate));
             endDateInput.setAttribute('min', formatDate(minDate));
         }
@@ -124,8 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let endDate = new Date(endDateInput.value)
         endYear = endDate.getFullYear()
-        endMonth = endDate.getMonth()+1
-        endDay = endDate.getDate()
+        endMonth = (endDate.getMonth()+1).toString().padStart(2, '0')
+        endDay = endDate.getDate().toString().padStart(2, '0')
         var maxDate = new Date(endDate);
         maxDate.setMonth(maxDate.getMonth());
         var minDate = new Date(endDate);
@@ -154,9 +154,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function getData(apiURL) {
-    const res = await fetch(apiURL);
-    const body = await res.json();
-    return body;
+    // Throttle: ensure 6s between API calls
+    const now = Date.now();
+    const elapsed = now - (window._lastApiCallTime || 0);
+    if (elapsed < 6000) {
+        await new Promise(r => setTimeout(r, 6000 - elapsed));
+    }
+    window._lastApiCallTime = Date.now();
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+        const res = await fetch(apiURL);
+        if (res.status === 429) {
+            console.warn(`getData: 429 received, waiting 6s (attempt ${attempt + 1}/3)`);
+            await new Promise(r => setTimeout(r, 6000));
+            window._lastApiCallTime = Date.now();
+            continue;
+        }
+        return await res.json();
+    }
+    console.warn('getData: max retries reached for', apiURL);
+    return { data: [] };
 }
 
 let data = []
@@ -164,7 +181,7 @@ let data = []
 let seriesData = [];
 let yAxis = [];
 for (let i = 0; i < data.length; i++) {
-    seriesData.push({x:data[i].start_time,y:data[i].value})
+    seriesData.push({x:data[i].startTime,y:data[i].value})
     yAxis.push(data[i].value)
 }
 let plotLabel = optionValue + " (" + startYear + ")"
@@ -181,12 +198,13 @@ const gridPlot = new Chart("grid-plot",
             radius: 0,
             hoverBackgroundColor: '#9fa5b5',
             pointHoverRadius: 5,
-            yAxisId: 'y'
+            yAxisID: 'y'
         }],
         },
         options: {
         responsive: true,
         maintainAspectRatio: true,
+        resizeDelay: 100,
         aspectRatio: 3/1,
         scales: {
             x: {
@@ -195,7 +213,10 @@ const gridPlot = new Chart("grid-plot",
                 grid: {
                     display: false
                 },
-                display: true
+                display: true,
+                ticks: {
+                    color: 'white'
+                }
             },
             y: {
                 beginAtZero: true,
@@ -204,7 +225,10 @@ const gridPlot = new Chart("grid-plot",
                 },
                 max: Math.max(...yAxis)+(Math.max(...yAxis)-Math.min(...yAxis))*0.05,
                 min: Math.min(...yAxis)-(Math.max(...yAxis)-Math.min(...yAxis))*0.05,
-                display: true
+                display: true,
+                ticks: {
+                    color: 'white'
+                }
             },        
         },
         plugins: {
@@ -238,6 +262,8 @@ const gridPlot = new Chart("grid-plot",
         }
     });
 
+Chart.defaults.color = 'white';
+
 function addStats(plotIdx, dataPlot, units, name, dateRange) {
     let stats = document.getElementById(name);
     let descriptionOne = finGridData.description.at(finGridData.id.findIndex(n => n == plotIdx[0]))
@@ -259,17 +285,28 @@ function addStats(plotIdx, dataPlot, units, name, dateRange) {
 
 async function submitForm() {
 
+    // Show spinner
+    const loader = document.getElementById('grid-plot-loader');
+    if (loader) loader.style.display = '';
+
     // timezone: (UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
 
-    let apiURL = `https://api.fingrid.fi/v1/variable/${optionId}/events/json?start_time=${startYear}-${startMonth}-${startDay}T${startHour}%3A${startMinute}%3A${startSeconds}Z&end_time=${endYear}-${endMonth}-${endDay}T${endHour}%3A${endMinute}%3A${endSeconds}Z`
+    let apiURL = `/api/datasets/${optionId}/data?startTime=${startYear}-${startMonth}-${startDay}T${startHour}:${startMinute}:${startSeconds}Z&endTime=${endYear}-${endMonth}-${endDay}T${endHour}:${endMinute}:${endSeconds}Z&format=json&pageSize=20000&sortBy=startTime&sortOrder=asc`
 
-    data = await getData(apiURL);
+    let res = await getData(apiURL);
+    data = res.data;
+
+    if (data.length === 0) {
+        console.warn('submitForm: no data returned');
+        if (loader) loader.style.display = 'none';
+        return;
+    }
 
     let unitValue;
     seriesData = [];
     yAxis = [];
     for (let i = 0; i < data.length; i++) {
-        seriesData.push({x:data[i].start_time,y:data[i].value})
+        seriesData.push({x:data[i].startTime,y:data[i].value})
         yAxis.push(data[i].value)
     }
 
@@ -287,8 +324,6 @@ async function submitForm() {
             gridPlot.options.aspectRatio = 1;
         }
         Chart.defaults.font.size = 8;
-        // resize the chart
-        gridPlot.resize();
     } 
 
     // add stats
@@ -297,8 +332,12 @@ async function submitForm() {
     // update the plot
     gridPlot.update();
 
-    let chartBox = document.getElementById('chartBox')
-    chartBox.style.visibility = "visible"
+    // Hide spinner
+    if (loader) loader.style.display = 'none';
+
+    // Show export CSV button
+    const exportBtn = document.getElementById('export-csv-btn');
+    if (exportBtn) exportBtn.style.display = '';
 
 }
 
@@ -314,7 +353,22 @@ submit.addEventListener('click', () => {
 
 }) 
 
+// CSV export
+document.getElementById('export-csv-btn')?.addEventListener('click', () => {
+    if (!seriesData || seriesData.length === 0) return;
 
+    const header = 'startTime,value\n';
+    const rows = seriesData.map(d => `${d.x},${d.y}`).join('\n');
+    const csv = header + rows;
 
-
-
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const name = optionValue.replace(/\s+/g, '_');
+    const start = startDateInput.value;
+    const end = endDateInput.value;
+    a.href = url;
+    a.download = `${name}_${start}_${end}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+});

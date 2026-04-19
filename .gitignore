@@ -1,0 +1,18 @@
+.vscode/
+
+archive/
+freezer/
+notes/
+
+.DS_Store
+
+imgs/extra-imgs/
+
+src/.env
+.env
+
+# Node modules
+src/node_modules/
+data/node_modules/
+node_modules/
+

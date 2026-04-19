@@ -56,8 +56,15 @@
     </div>
 
     <div id="chartBox" class="chartBox">
-        <canvas id="grid-plot"></canvas>
-        <a href="#info-block" class="info-link info-container glow-on-hover"><img id="info-circle" src="./imgs/info.circle.svg" alt=""></a>
+        <div class="chart-wrapper" id="grid-plot-wrapper">
+            <div class="loader" id="grid-plot-loader" style="display:none"></div>
+            <canvas id="grid-plot"></canvas>
+        </div>
+        <!-- make buttons side by side -->
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <a href="#info-block" class="info-link info-container glow-on-hover"><img id="info-circle" src="./imgs/info.circle.svg" alt=""></a>
+            <a id="export-csv-btn" class="info-link info-container glow-on-hover" style="display:none; cursor:pointer;">Export CSV</a>
+        </div>
         <div id="info-block" class="container-block">
             <div class="content-block">
               <p id="info-text">
@@ -78,7 +85,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" integrity="sha512-wUYbRPLV5zs6IqvWd88HIqZU/b8TBx+I8LEioQ/UC0t5EMCLApqhIAnUg7EsAzdbhhdgW07TqYDdH3QEXRcPOQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Date adapter -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <script src="./js/math/math.js"></script>

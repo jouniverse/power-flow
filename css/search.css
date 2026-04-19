@@ -1,7 +1,13 @@
 body
 {
-    background: var(--body-bg);
-    min-height: 100vh;
+    /* background: var(--body-bg);
+    min-height: 100vh; */
+    background-color: var(--body-bg);
+    background-image: url('../imgs/power-company-logo.svg');
+    background-size: 150px 150px;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-position: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,7 +20,7 @@ h1 {
     font-weight: bold;
     padding: 2rem;
     margin-top: 3rem;
-    color: var(--select-clicked);
+    color: var(--select-color);
 }
 
 #search-logo {
@@ -30,6 +36,15 @@ h1 {
     align-items: center;
     gap: 1.5rem 5rem;
     /* gap: 7.5% 5%; */
+    /* glassmorphism */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 3px 3px 3px rgba (0,0, 0,0. 089) ;
+    /*  */
+    padding: 50px;
+    border-radius: 30px;
 }
 
 #input {
@@ -114,13 +129,26 @@ select:focus {
 .chartBox {
     width: 90%;
     margin-top: 20px;
-    visibility: hidden;
     height: auto;
+    margin: 20px;
+    
 }
 
 canvas {
     margin-top: 70px;
     margin-bottom: 50px;
+    padding: 20px;
+    /* glassmorphism */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 3px 3px 3px rgba (0,0, 0,0. 089) ;
+    border-radius: 30px;
+}
+
+.content-block {
+    background-color: var(--menu-bg);
 }
 
 #info-text {

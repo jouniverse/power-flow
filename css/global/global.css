@@ -26,3 +26,40 @@
 html {
     scroll-behavior: smooth;
 }
+
+/*  custom scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--menu-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--select-color);
+    border-radius: 6px;
+    border: 3px solid var(--menu-bg);
+}
+
+.chart-wrapper {
+    position: relative;
+}
+
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid;
+    border-color: #fff #fff0;
+    animation: l1 1s infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+@keyframes l1 {
+    to { transform: translate(-50%, -50%) rotate(.5turn); }
+}
