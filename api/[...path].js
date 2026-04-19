@@ -1,0 +1,24 @@
+module.exports = async function handler(req, res) {
+  const API_KEY = process.env.FINGRID_API_KEY;
+  if (!API_KEY) {
+    return res.status(500).json({ error: "FINGRID_API_KEY not configured" });
+  }
+
+  const upstreamURL = `https://data.fingrid.fi${req.url}`;
+
+  try {
+    const response = await fetch(upstreamURL, {
+      headers: {
+        "x-api-key": API_KEY,
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    res.setHeader("Content-Type", contentType);
+    res.status(response.status).send(await response.text());
+  } catch (err) {
+    console.error("Proxy error:", err.message);
+    res.status(502).json({ error: "Failed to fetch from Fingrid API" });
+  }
+};
