@@ -1,5 +1,4 @@
 {
   "framework": null,
-  "buildCommand": "mkdir -p dist && cp -r *.html css js imgs dist/",
-  "outputDirectory": "dist"
+  "buildCommand": "mkdir -p public && cp *.html public/ && cp -r css js imgs public/"
 }
