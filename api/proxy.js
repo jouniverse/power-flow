@@ -4,7 +4,13 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: "FINGRID_API_KEY not configured" });
   }
 
-  const upstreamURL = `https://data.fingrid.fi${req.url}`;
+  // The original path comes via the _proxyPath query param (set by vercel.json rewrite)
+  const proxyPath = req.query._proxyPath || "";
+  // Rebuild query string without our internal param
+  const params = { ...req.query };
+  delete params._proxyPath;
+  const qs = new URLSearchParams(params).toString();
+  const upstreamURL = `https://data.fingrid.fi/api/${proxyPath}${qs ? "?" + qs : ""}`;
 
   try {
     const response = await fetch(upstreamURL, {
